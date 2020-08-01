@@ -29,10 +29,12 @@ export class landiagnose{
         let endindex=0
         let strarr=str.split("\n")
         let myline=strarr[line-1]
-        startindex=myline.search(/\w/)
-        endindex=myline.search(";")
-        if (endindex==-1) endindex=myline.length
-        ran=new Range(new Position(line-1, startindex),new Position(line-1, endindex))
+        if(myline){
+            startindex=myline.search(/\w/)
+            endindex=myline.search(";")
+            if (endindex==-1) endindex=myline.length
+            ran=new Range(new Position(line-1, startindex),new Position(line-1, endindex))
+        }
         return ran
     }
     /**
