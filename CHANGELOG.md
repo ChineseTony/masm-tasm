@@ -15,7 +15,7 @@ All notable changes to the "masm-tasm" extension will be documented in this file
 
 ## 0.1.0 [2020/7/31]
 
-基本实现了与dos模拟器交互的主要功能了，应该文定路。渴求反馈哈
+基本实现了与dos模拟器交互的主要功能了，应该稳定了。渴求反馈哈
 
 ### 0.0.10/0.0.11
 
@@ -55,4 +55,4 @@ All notable changes to the "masm-tasm" extension will be documented in this file
 
 ### [Unreleased]
 
-在学习南邮的《微机原理与接口技术》的时候，苦于没有比较好的汇编环境，一开始使用的dosbox里面的edit.com 后来使用的npp, 最近接触了vscode，发现里面有masm-code 可以基本很好地实现汇编操作，但是不支持TASM，下载相关组件有时会失败，于是决定在这个插件的基础上修改，并发布了这个插件，非常感谢。
+在学习南邮的《微机原理与接口技术》的时候，苦于没有比较好的汇编环境，一开始使用的dosbox里面的`edit.com` 后来使用的`notepad++`, 最近接触了`VSCode`，发现里面有`masm-code`这个插件可以基本很好地实现汇编操作，但是不支持TASM，下载相关组件有时会失败，于是决定在这个插件的基础上修改，并发布了这个插件，非常感谢。
