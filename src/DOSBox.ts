@@ -15,30 +15,40 @@ export class DOSBox{
     public openDOSBox(conf:Config,more:string,bothtools?:boolean) {
         let filename=window.activeTextEditor?.document.fileName
         if (filename){
-            this.writeBoxconfig(more,conf,bothtools);
-            exec('start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path,shell:'cmd.exe'})
+            this.writeBoxconfig(more,conf,bothtools)
             if(bothtools)this.cleanandcopy(conf.path,filename)
+            if(process.platform=='win32'){
+                exec('start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path,shell:'cmd.exe'})
+            }
+            else{
+                exec('dosbox -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path})
+            }
             this._OutChannel.appendLine("( ^ V ^ )已打开DOSBox，并配置汇编环境")
         }   
     }
     private cleanandcopy(cleanpath:string,copyfilename:string){
-        exec('  del work\\T.* && copy "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath,shell:'cmd.exe'});
+        if(process.platform=='win32'){
+            exec('  del work\\T.* && copy "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath,shell:'cmd.exe'});
+        }
+        else{
+            exec('  rm work/T.* && cp "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath});
+        }
         this._OutChannel.appendLine(copyfilename+'已将该文件复制到'+cleanpath+'work/T.ASM');
      }
     private writeBoxconfig(autoExec: string,conf:Config,bothtool?:boolean)
     {
         let fs: FileSystem = workspace.fs;
         let configUri:Uri = Uri.parse('file:///' + conf.path + '/dosbox/VSC-ExtUse.conf');
-        let Pathadd=conf.MASMorTASM
-        if (bothtool){Pathadd='tasm;c:\\masm'}
+        let Pathadd=' '
+        if (bothtool){Pathadd='set PATH=c:\\tasm;c:\\masm'}
         const configContent = `[sdl]
 windowresolution=${conf.resolution}
 output=opengl
 [autoexec]
 mount c "${conf.path}"
 mount d "${conf.path}\\work"
-set PATH=c:\\${Pathadd}
 d:
+${Pathadd}
 ${autoExec}`;
         fs.writeFile(configUri, new TextEncoder().encode(configContent));
     }

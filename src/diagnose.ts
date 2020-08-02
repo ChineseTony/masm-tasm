@@ -3,13 +3,11 @@ export class landiagnose{
     private masmCollection:DiagnosticCollection
     private tasmCollection:DiagnosticCollection
     private diagnostics: Diagnostic[]
-    private tasmmacro:string[]
     private masmerror:number=0
     private tasmerror:number=0
     private masmwarn:number=0
     private tasmwarn:number=0
     constructor(){
-        this.tasmmacro=new Array()
         this.masmCollection=languages.createDiagnosticCollection("MASM")
         this.tasmCollection=languages.createDiagnosticCollection("TASM")
         this.diagnostics = []
@@ -97,140 +95,144 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
 //TODO:目前代码比较得简单粗暴
     /**
      * 错误匹配diagnose problemmatch，返回0无错误，返回1有警告信息，返回2有错误
-     * @param msg 输出信息
-     * @param type masm还是tasm
+     * @param text 源代码文件的文本内容
+     * @param info 输出的错误信息
+     * @param fileuri 源代码文件的位置uri定位
      */
-    public ErrMsgProcess(text:string,info:string,fileuri:Uri):number{
+    public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
         let flag =0;
         let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
-        let r=firstreg.exec(info)
         console.log(text)
-        this.tasmmacro=[]
-        if (r == null){
-            console.error('脚本输出中无法获得汇编工具信息')}
+        let MASMorTASM:string|undefined
+        if (ASM) MASMorTASM=ASM
         else{
-            let MASMorTASM=r.pop()
-            if(MASMorTASM=='TASM'){
-                this.diagnostics = [];
-                let tasm=/\s*\*+(Error|Warning)\*+\s+(T.ASM)\((\d+)\)\s+(.*)/
-                let tasm2=/\s*\*+(Error|Warning)\*+\s+(T.ASM)\((\d+)\) (.*)\((\d+)\)\s+(.*)/
-                let allmsg=info.split('\n')
-                let i=0
-                this.tasmerror=0
-                this.tasmwarn=0
-                for (i=1;i<allmsg.length;i++)
-                {
-                    let oneinfo=tasm2.exec(allmsg[i])
-                    if(oneinfo !== null ){
-                        let severity:number=0
-                        oneinfo.shift()//弹出全部信息
-                        switch(oneinfo.shift())
-                        {
-                            case 'Error':
-                                severity=0
-                                this.tasmerror++
-                                break;
-                            case 'Warning':
-                                severity=1
-                                this.tasmwarn++
-                                break;
-                        }
-                        oneinfo.shift()//弹出文件名
-                        let line_get=oneinfo.shift()//错误所在行
-                        let macroname=oneinfo.shift()//宏名
-                        let macroline=oneinfo.shift()//错误所在宏的位置
-                        let msg=oneinfo.shift()//错误名称
-                        if( line_get && macroname && macroline && msg )
-                        {
-                            let related=this.TasmMacroRelated(fileuri,text,macroname,macroline,msg)
-                            let line=parseInt(line_get)
-                            this.tasmdiagpush(severity,line,msg,text,related)
-                            delete allmsg[i]
-                        }
-                    }
-                    oneinfo=tasm.exec(allmsg[i])
-                    if(oneinfo !== null && oneinfo.length==5)
-                    { 
-                        let severity:number=0
-                        oneinfo.shift()//弹出全部内容
-                        switch(oneinfo.shift())
-                        {
-                            case 'Error':
-                                severity=0
-                                this.tasmerror++
-                                break;
-                            case 'Warning':
-                                severity=1
-                                this.tasmwarn++
-                                break;
-                        }
-                        oneinfo.shift();//弹出文件内容
-                        let line_get=oneinfo.shift()
-                        let msg=oneinfo.shift()
-                        if(line_get && msg) {
-                            let line=parseInt(line_get)
-                            this.tasmdiagpush(severity,line,msg,text)
-                        }
-                    }
-                }
-                 this.tasmCollection.set(fileuri,this.diagnostics)
+            let r=firstreg.exec(info)
+            if (r == null){
+                console.error('脚本输出中无法获得汇编工具信息')}
+            else{
+                MASMorTASM=r.pop()
             }
-            else if(MASMorTASM=='MASM'){
-                this.diagnostics = [];
-                this.masmerror=0
-                this.masmwarn=0
-                let masm=/\s*T.ASM\((\d+)\): (error|warning)\s+([A-Z]\d+):\s+(.*)/g
-                let masml=/\s*T.ASM\((\d+)\): Out of memory/g
-                let oneinfo=masml.exec(info)
-                while(oneinfo != null && oneinfo.length==2){
-                    let diagnostic: Diagnostic
-                    let line=oneinfo.pop()
-                    if(line){
-                    diagnostic= {
-                        severity:0,
-                        message: "Out of memory",
-                        range:this.rangeProvider(text,line)
-                    }
-                    this.masmerror++
-                    this.diagnostics.push(diagnostic)
-                    oneinfo=masml.exec(info)
-                }   
-                }
-                oneinfo=masm.exec(info)
-                while(oneinfo != null && oneinfo.length==5)
-                {
+        }
+        if(MASMorTASM=='TASM'){
+            this.diagnostics = [];
+            let tasm=/\s*\*+(Error|Warning)\*+\s+(T.ASM)\((\d+)\)\s+(.*)/
+            let tasm2=/\s*\*+(Error|Warning)\*+\s+(T.ASM)\((\d+)\) (.*)\((\d+)\)\s+(.*)/
+            let allmsg=info.split('\n')
+            let i=0
+            this.tasmerror=0
+            this.tasmwarn=0
+            for (i=1;i<allmsg.length;i++)
+            {
+                let oneinfo=tasm2.exec(allmsg[i])
+                if(oneinfo !== null ){
                     let severity:number=0
-                    let msg:string=' '
-                    oneinfo.shift()//弹出全部内容
-                    let line_get=oneinfo.shift()
+                    oneinfo.shift()//弹出全部信息
                     switch(oneinfo.shift())
                     {
                         case 'Error':
                             severity=0
-                            this.masmerror++
-                            break
-                        case 'Warning':severity=1
-                            this.masmwarn++
-                            break
+                            this.tasmerror++
+                            break;
+                        case 'Warning':
+                            severity=1
+                            this.tasmwarn++
+                            break;
                     }
-                    let msgcode_get=oneinfo.shift()
-                    let msg_get=oneinfo.shift()
-                    if(msgcode_get && msg_get) msg=msgcode_get+' '+msg_get
-                    let diagnostic: Diagnostic
-                    if(line_get ) {
-                        diagnostic= {
-                            severity:severity,
-                            range:this.rangeProvider(text,line_get),
-                            message: msg,
-                            source: 'MASM',
-                        }
-                        this.diagnostics.push(diagnostic)
-                    };
-                    oneinfo=masm.exec(info)
+                    oneinfo.shift()//弹出文件名
+                    let line_get=oneinfo.shift()//错误所在行
+                    let macroname=oneinfo.shift()//宏名
+                    let macroline=oneinfo.shift()//错误所在宏的位置
+                    let msg=oneinfo.shift()//错误名称
+                    if( line_get && macroname && macroline && msg )
+                    {
+                        let related=this.TasmMacroRelated(fileuri,text,macroname,macroline,msg)
+                        let line=parseInt(line_get)
+                        this.tasmdiagpush(severity,line,msg,text,related)
+                        delete allmsg[i]
+                    }
                 }
-                if (text){
-                    this.masmCollection.set(fileuri,this.diagnostics)
+                oneinfo=tasm.exec(allmsg[i])
+                if(oneinfo !== null && oneinfo.length==5)
+                { 
+                    let severity:number=0
+                    oneinfo.shift()//弹出全部内容
+                    switch(oneinfo.shift())
+                    {
+                        case 'Error':
+                            severity=0
+                            this.tasmerror++
+                            break;
+                        case 'Warning':
+                            severity=1
+                            this.tasmwarn++
+                            break;
+                    }
+                    oneinfo.shift();//弹出文件内容
+                    let line_get=oneinfo.shift()
+                    let msg=oneinfo.shift()
+                    if(line_get && msg) {
+                        let line=parseInt(line_get)
+                        this.tasmdiagpush(severity,line,msg,text)
+                    }
                 }
+            }
+                this.tasmCollection.set(fileuri,this.diagnostics)
+        }
+        else if(MASMorTASM=='MASM'){
+            this.diagnostics = [];
+            this.masmerror=0
+            this.masmwarn=0
+            let masm=/\s*T.ASM\((\d+)\): (error|warning)\s+([A-Z]\d+):\s+(.*)/g
+            let masml=/\s*T.ASM\((\d+)\): Out of memory/g
+            let oneinfo=masml.exec(info)
+            while(oneinfo != null && oneinfo.length==2){
+                let diagnostic: Diagnostic
+                let line=oneinfo.pop()
+                if(line){
+                diagnostic= {
+                    severity:0,
+                    message: "Out of memory",
+                    range:this.rangeProvider(text,line)
+                }
+                this.masmerror++
+                this.diagnostics.push(diagnostic)
+                oneinfo=masml.exec(info)
+            }   
+            }
+            oneinfo=masm.exec(info)
+            while(oneinfo != null && oneinfo.length==5)
+            {
+                let severity:number=0
+                let msg:string=' '
+                oneinfo.shift()//弹出全部内容
+                let line_get=oneinfo.shift()
+                switch(oneinfo.shift())
+                {
+                    case 'Error':
+                        severity=0
+                        this.masmerror++
+                        break
+                    case 'Warning':severity=1
+                        this.masmwarn++
+                        break
+                }
+                let msgcode_get=oneinfo.shift()
+                let msg_get=oneinfo.shift()
+                if(msgcode_get && msg_get) msg=msgcode_get+' '+msg_get
+                let diagnostic: Diagnostic
+                if(line_get ) {
+                    diagnostic= {
+                        severity:severity,
+                        range:this.rangeProvider(text,line_get),
+                        message: msg,
+                        source: 'MASM',
+                    }
+                    this.diagnostics.push(diagnostic)
+                };
+                oneinfo=masm.exec(info)
+            }
+            if (text){
+                this.masmCollection.set(fileuri,this.diagnostics)
             }
         }
         return flag

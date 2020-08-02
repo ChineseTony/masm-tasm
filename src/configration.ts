@@ -21,8 +21,8 @@ export class Config {
         let configtoolpath:string|undefined=workspace.getConfiguration('masmtasm.ASM').get('toolspath');
             switch(confboxrun){
                 case "keep":this.BOXrun=' ';break;
-                case "exit after run":this.BOXrun=' exit ';break;
-                case "pause then exit after run":this.BOXrun='pause \n exit';break;
+                case "exit after run":this.BOXrun='e';break;
+                case "pause then exit after run":this.BOXrun='p';break;
             }
             if (configtoolpath){
                 this._path=configtoolpath.toString().replace(/\\/g, '/');}

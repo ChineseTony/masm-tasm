@@ -31,7 +31,7 @@ export class runcode{
         switch(this._config.DOSemu){
             case 'msdos player': this.msdosplayer.PlayerASM(this._config,true,true,this.landiag);break;
             case 'dosbox':
-                let text=`${this._config.ASM} \nif exist T.OBJ ${this._config.LINK} \nif exist T.EXE T.EXE \n`+this._config.BOXrun
+                let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.BOXrun
                 this.dosbox.openDOSBox(this._config,text,true,)
                 break;
             case 'auto': this.msdosplayer.PlayerASM(this._config,true,false,this.landiag);break;
@@ -54,9 +54,9 @@ export class runcode{
             this.msdosplayer.PlayerASM(this._config,false,inplayer,this.landiag)
         }
         else{
-            let text=`${this._config.ASM} \nif exist T.OBJ ${this._config.LINK} \nif exist T.EXE `+this._config.DEBUG
+            let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' debug'
             this.dosbox.openDOSBox(this._config,text,true,)
-        }   
+        }
     }
     public cleanalldiagnose(){
         this.landiag.cleandiagnose('both')
