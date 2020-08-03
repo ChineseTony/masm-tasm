@@ -32,7 +32,7 @@ export class runcode{
             case 'msdos player': this.msdosplayer.PlayerASM(this._config,true,true,this.landiag);break;
             case 'dosbox':
                 let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.BOXrun
-                this.dosbox.openDOSBox(this._config,text,true,)
+                this.dosbox.openDOSBox(this._config,text,true,this.landiag)
                 break;
             case 'auto': this.msdosplayer.PlayerASM(this._config,true,false,this.landiag);break;
             default: throw new Error("未指定emulator");  
@@ -55,7 +55,7 @@ export class runcode{
         }
         else{
             let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' debug'
-            this.dosbox.openDOSBox(this._config,text,true,)
+            this.dosbox.openDOSBox(this._config,text,true,this.landiag)
         }
     }
     public cleanalldiagnose(){

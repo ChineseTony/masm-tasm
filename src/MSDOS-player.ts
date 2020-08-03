@@ -73,6 +73,13 @@ export class MSDOSplayer{
     }
 
     private afterlink(conf:Config,viaplayer:boolean,runordebug:boolean){
+        let debug:string
+        if(conf.MASMorTASM=='TASM'){
+            debug='if exist c:\\tasm\\TDC2.TD copy c:\\tasm\\TDC2.TD TDCONFIG.TD \nTD T.EXE'
+        }
+        else{
+            debug='DEBUG T.EXE'
+        }
         if(viaplayer){
             this.outTerminal(runordebug,conf)
         }
@@ -81,7 +88,7 @@ export class MSDOSplayer{
             if (runordebug){
             dosbox.openDOSBox(conf,'T.EXE\n'+conf.BOXrun,false)}
             else{
-            dosbox.openDOSBox(conf,conf.DEBUG,false)}
+            dosbox.openDOSBox(conf,debug,true)}
         }
     }
 }

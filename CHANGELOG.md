@@ -13,6 +13,10 @@ All notable changes to the "masm-tasm" extension will be documented in this file
 - [ ] bug：每次一开始启动的时候需要点击两次,第一次不起作用
 - [ ] LSP和DAP支持（目前对我来说太难了）
 
+## 0.1.1
+
+- [x] 简单实现了dosbox下的输出匹配
+
 ## 0.1.0 [2020/7/31]
 
 基本实现了与dos模拟器交互的主要功能了，应该稳定了。渴求反馈哈

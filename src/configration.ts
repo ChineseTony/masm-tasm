@@ -9,9 +9,6 @@ export class Config {
     public DOSemu: string|undefined;
     public savefirst: boolean|undefined;
     public MASMorTASM: string | undefined;
-        public ASM:string
-        public LINK:string
-        public DEBUG:string
     constructor(extpath?:string) {
         this.resolution = workspace.getConfiguration('masmtasm.dosbox').get('CustomResolution');
         this.MASMorTASM= workspace.getConfiguration('masmtasm.ASM').get('MASMorTASM');
@@ -20,7 +17,7 @@ export class Config {
         let confboxrun=workspace.getConfiguration('masmtasm.dosbox').get('run');
         let configtoolpath:string|undefined=workspace.getConfiguration('masmtasm.ASM').get('toolspath');
             switch(confboxrun){
-                case "keep":this.BOXrun=' ';break;
+                case "keep":this.BOXrun='k';break;
                 case "exit after run":this.BOXrun='e';break;
                 case "pause then exit after run":this.BOXrun='p';break;
             }
@@ -32,16 +29,6 @@ export class Config {
                 else {
                 window.showInformationMessage('未设置汇编工具路径请在设置中添加相关设置');
                 throw new Error("no tools please add your tool in settings");
-                }
-            if (this.MASMorTASM=='MASM'){
-                this.ASM='MASM T.ASM;'
-                this.LINK='LINK T.OBJ;'
-                this.DEBUG='DEBUG T.EXE'
-                }
-                else{
-                this.ASM='TASM /zi T.ASM'
-                this.LINK='TLINK /v/3 T.OBJ;'
-                this.DEBUG='if exist c:\\tasm\\TDC2.TD copy c:\\tasm\\TDC2.TD TDCONFIG.TD \nTD T.EXE'
                 }
     }
     public get path(): string{
