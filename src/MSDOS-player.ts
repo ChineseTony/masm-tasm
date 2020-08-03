@@ -33,7 +33,6 @@ export class MSDOSplayer{
             exec(command,{cwd:conf.path,shell:'cmd.exe'},(error, stdout, stderr) => 
             {
                 if (error) {console.error(`执行的错误: ${error}`);}
-                this.extOutChannel.append(stdout)
                 let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)
                 switch(code)
                 {

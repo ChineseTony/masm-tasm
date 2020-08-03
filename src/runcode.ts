@@ -16,7 +16,7 @@ export class runcode{
         this._config=null;
         this.msdosplayer=new MSDOSplayer(this.extOutChannel,this.extpath)
         this.dosbox=new DOSBox(this.extOutChannel)
-        this.landiag=new landiagnose()
+        this.landiag=new landiagnose(this.extOutChannel)
     }
     Openemu(){
         this._config=this.update()

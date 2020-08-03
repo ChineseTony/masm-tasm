@@ -1,4 +1,4 @@
-import { languages,Diagnostic,FileSystem,workspace,Range,Position,DiagnosticCollection, Uri, DiagnosticRelatedInformation } from 'vscode'
+import { languages,Diagnostic,Range,Position,DiagnosticCollection, Uri, DiagnosticRelatedInformation, OutputChannel } from 'vscode'
 export class landiagnose{
     private masmCollection:DiagnosticCollection
     private tasmCollection:DiagnosticCollection
@@ -7,7 +7,9 @@ export class landiagnose{
     private tasmerror:number=0
     private masmwarn:number=0
     private tasmwarn:number=0
-    constructor(){
+    private _OutChannel:OutputChannel
+    constructor(Channel:OutputChannel){
+        this._OutChannel=Channel
         this.masmCollection=languages.createDiagnosticCollection("MASM")
         this.tasmCollection=languages.createDiagnosticCollection("TASM")
         this.diagnostics = []
@@ -44,6 +46,7 @@ export class landiagnose{
      * @param fileuri 源代码文件的位置uri定位
      */
     public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
+        this._OutChannel.append(info.replace('\r\n\r\n','\r\n'))
         let flag =2;
         let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
         console.log(text,info)
