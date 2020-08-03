@@ -20,11 +20,8 @@ export class runcode{
     }
     Openemu(){
         this._config=this.update()
-        let a=this._config.toolsUri
-        let b='\\d\\d\t'
-        console.log(b,a.toString(),a.path,a.fsPath)
         this.extOutChannel.appendLine('MASM/TASM>>打开DOSBox');
-        //this.dosbox.openDOSBox(this._config,' ',true)
+        this.dosbox.openDOSBox(this._config,' ',true)
     }
     /**运行汇编代码的入口
      * 获取拓展的设置，并执行相应操作

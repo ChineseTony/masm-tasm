@@ -30,7 +30,7 @@ export class DOSBox{
     }
     private BOXdiag(conf:Config,diag:landiagnose):string{
         let info:string=' ',content
-        let infouri=Uri.file(conf.path + '/work/T.TXT');
+        let infouri=Uri.joinPath(conf.toolsUri, '.\\work\\T.TXT');
         let turi=window.activeTextEditor?.document.uri
         let texturi:Uri
         if (turi) {
@@ -52,18 +52,20 @@ export class DOSBox{
     }
     private cleanandcopy(cleanpath:string,copyfilename:string){
         if(process.platform=='win32'){
-            exec('  del work\\T.* && copy "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath,shell:'cmd.exe'});
+            let command:string='del/Q work\\t*.* && copy "'+copyfilename+'" work\\T.ASM'
+            execSync(command,{cwd:cleanpath,shell:'cmd.exe'});
         }
         else{
-            exec('  rm work/T.* ; cp "'+copyfilename+'" work/T.ASM',{cwd:cleanpath});
+            let command:string='if [ -d work ]; then rm work/*; else mkdir work; fi; cp "'+copyfilename+'" work/T.ASM'
+            execSync(command,{cwd:cleanpath});
         }
         this._OutChannel.appendLine(copyfilename+'已将该文件复制到'+cleanpath+'work/T.ASM');
      }
     private writeBoxconfig(autoExec: string,conf:Config,bothtool?:boolean)
     {
         let fs: FileSystem = workspace.fs;
-        let configUri:Uri = Uri.file(conf.path + '/dosbox/VSC-ExtUse.conf');
-        if(process.platform=='win32')configUri=Uri.joinPath(conf.toolsUri,'./dosbox/VSC-ExtUse.conf');
+        let configUri=Uri.joinPath(conf.toolsUri,'./dosbox/VSC-ExtUse.conf');
+        let workpath=Uri.joinPath(conf.toolsUri,'./work/');
         let Pathadd=' '
         if (bothtool) Pathadd='set PATH=c:\\tasm;c:\\masm'
         const configContent = `[sdl]
@@ -71,7 +73,7 @@ windowresolution=${conf.resolution}
 output=opengl
 [autoexec]
 mount c "${conf.path}"
-mount d "${conf.path}/work"
+mount d "${workpath.fsPath}"
 d:
 ${Pathadd}
 ${autoExec}`;

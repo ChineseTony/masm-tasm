@@ -29,30 +29,31 @@ export class MSDOSplayer{
                 }
             )
             const filename = fileuri.fsPath
-            exec('"'+this.extpath+'\\tools\\player\\asmo.bat" "'+conf.path+'" '+conf.MASMorTASM+' "'+filename+'"',{cwd:conf.path,shell:'cmd.exe'},
-        (error, stdout, stderr) => {
-            if (error) {console.error(`执行的错误: ${error}`);return;}
-            this.extOutChannel.append(stdout)
-            let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)
-            switch(code)
+            let command='"'+this.extpath+'\\tools\\player\\asmo.bat" "'+conf.path+'" '+conf.MASMorTASM+' "'+filename+'"'
+            exec(command,{cwd:conf.path,shell:'cmd.exe'},(error, stdout, stderr) => 
             {
-                case 0:
-                    let Errmsgwindow=conf.MASMorTASM+'汇编出错,无法运行/调试'
-                    window.showErrorMessage(Errmsgwindow);
-                    break
-                case 1:
-                    let warningmsgwindow=conf.MASMorTASM+'成功汇编链接生成EXE，但是汇编时产生了警告信息(warning)，可能无法运行/调试,是否继续操作'
-                    window.showInformationMessage(warningmsgwindow, '继续', '否').then(result => {
-                        if (result === '继续') {
-                            this.afterlink(conf,viaplayer,isrun)
-                        } 
-                    });
-                    break
-                case 2:
-                    this.afterlink(conf,viaplayer,isrun)
-                    break
-            }
-          })}
+                if (error) {console.error(`执行的错误: ${error}`);}
+                this.extOutChannel.append(stdout)
+                let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)
+                switch(code)
+                {
+                    case 0:
+                        let Errmsgwindow=conf.MASMorTASM+'汇编出错,无法运行/调试'
+                        window.showErrorMessage(Errmsgwindow);
+                        break
+                    case 1:
+                        let warningmsgwindow=conf.MASMorTASM+'成功汇编链接生成EXE，但是汇编时产生了警告信息(warning)，可能无法运行/调试,是否继续操作'
+                        window.showInformationMessage(warningmsgwindow, '继续', '否').then(result => {
+                            if (result === '继续') {
+                                this.afterlink(conf,viaplayer,isrun)
+                            } 
+                        });
+                        break
+                    case 2:
+                        this.afterlink(conf,viaplayer,isrun)
+                        break
+                }
+            })}
     }
     private outTerminal(run:boolean,conf:Config) {
         if (this._terminal?.exitStatus || this._terminal ===null) {
@@ -64,9 +65,9 @@ export class MSDOSplayer{
         }
         this._terminal.show()  
         if (run){
-            this._terminal.sendText('msdos T.EXE')}
+            this._terminal.sendText('..\\player\\msdos T.EXE')}
         else{
-            this._terminal.sendText('msdos -v5.0 ..\\masm\\debug T.EXE')}
+            this._terminal.sendText('..\\player\\msdos -v5.0 ..\\masm\\debug T.EXE')}
         this._terminal.dispose
     }
 

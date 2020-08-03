@@ -6,8 +6,10 @@
 @echo off
 set "cdo=%CD%">nul 
 set path=%path%;%~dp0;>nul 
-cd "%1%\work"
-del T.*
+cd "%1%"
+if not exist work mkdir work
+cd work
+del T*.*
 copy %3 T.ASM>nul
 if "%2" == "MASM" goto masm
 if "%2" == "TASM" goto tasm
