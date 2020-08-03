@@ -102,7 +102,7 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
     public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
         let flag =0;
         let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
-        console.log(text)
+        console.log(text,info)
         let MASMorTASM:string|undefined
         if (ASM) MASMorTASM=ASM
         else{

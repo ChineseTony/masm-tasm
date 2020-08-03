@@ -26,7 +26,6 @@ export class MSDOSplayer{
             workspace.fs.readFile(fileuri).then(
                 (text)=>{
                     filecontent=text.toString()
-                    //console.log(text)
                 }
             )
             const filename = window.activeTextEditor?.document.fileName;
@@ -86,7 +85,7 @@ export class MSDOSplayer{
         else {
             let dosbox=new  DOSBox(this.extOutChannel)
             if (runordebug){
-            dosbox.openDOSBox(conf,'T.EXE\n'+conf.BOXrun,false)}
+            dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd(),false)}
             else{
             dosbox.openDOSBox(conf,debug,true)}
         }

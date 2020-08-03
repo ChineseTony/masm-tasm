@@ -31,7 +31,7 @@ export class runcode{
         switch(this._config.DOSemu){
             case 'msdos player': this.msdosplayer.PlayerASM(this._config,true,true,this.landiag);break;
             case 'dosbox':
-                let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.BOXrun
+                let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.boxrunbat()
                 this.dosbox.openDOSBox(this._config,text,true,this.landiag)
                 break;
             case 'auto': this.msdosplayer.PlayerASM(this._config,true,false,this.landiag);break;
@@ -71,6 +71,7 @@ export class runcode{
         if (this._config.savefirst) {
             vscode.workspace.saveAll()
         }
+        this.extOutChannel.show()
         return this._config
     }
 }
