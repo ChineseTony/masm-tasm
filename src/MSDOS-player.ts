@@ -28,20 +28,19 @@ export class MSDOSplayer{
                     filecontent=text.toString()
                 }
             )
-            const filename = window.activeTextEditor?.document.fileName;
-            exec('"'+this.extpath+'\\tools\\asmo.bat" "'+conf.path+'" '+conf.MASMorTASM+' link "'+filename+'"',{cwd:conf.path,shell:'cmd.exe'},
+            const filename = fileuri.fsPath
+            exec('"'+this.extpath+'\\tools\\player\\asmo.bat" "'+conf.path+'" '+conf.MASMorTASM+' "'+filename+'"',{cwd:conf.path,shell:'cmd.exe'},
         (error, stdout, stderr) => {
             if (error) {console.error(`执行的错误: ${error}`);return;}
             this.extOutChannel.append(stdout)
-            let info=stdout.substring(0,4)
-            diag.ErrMsgProcess(filecontent,stdout,fileuri)
-            switch(info)
+            let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)
+            switch(code)
             {
-                case 'Fail':
+                case 0:
                     let Errmsgwindow=conf.MASMorTASM+'汇编出错,无法运行/调试'
                     window.showErrorMessage(Errmsgwindow);
                     break
-                case 'warn':
+                case 1:
                     let warningmsgwindow=conf.MASMorTASM+'成功汇编链接生成EXE，但是汇编时产生了警告信息(warning)，可能无法运行/调试,是否继续操作'
                     window.showInformationMessage(warningmsgwindow, '继续', '否').then(result => {
                         if (result === '继续') {
@@ -49,7 +48,7 @@ export class MSDOSplayer{
                         } 
                     });
                     break
-                case 'Succ': 
+                case 2:
                     this.afterlink(conf,viaplayer,isrun)
                     break
             }
@@ -85,7 +84,7 @@ export class MSDOSplayer{
         else {
             let dosbox=new  DOSBox(this.extOutChannel)
             if (runordebug){
-            dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd(),false)}
+            dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd,false)}
             else{
             dosbox.openDOSBox(conf,debug,true)}
         }

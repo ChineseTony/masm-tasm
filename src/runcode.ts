@@ -20,18 +20,22 @@ export class runcode{
     }
     Openemu(){
         this._config=this.update()
-        this.dosbox.openDOSBox(this._config,' ',true)
+        let a=this._config.toolsUri
+        let b='\\d\\d\t'
+        console.log(b,a.toString(),a.path,a.fsPath)
+        this.extOutChannel.appendLine('MASM/TASM>>打开DOSBox');
+        //this.dosbox.openDOSBox(this._config,' ',true)
     }
     /**运行汇编代码的入口
      * 获取拓展的设置，并执行相应操作
      */
     Run(){
         this._config=this.update()
-        this.extOutChannel.appendLine('(^ v ^)运行程序，使用'+this._config.MASMorTASM+' 在'+this._config.DOSemu+'模式下运行');
+        this.extOutChannel.appendLine(this._config.MASMorTASM+'('+this._config.DOSemu+')>>运行');
         switch(this._config.DOSemu){
             case 'msdos player': this.msdosplayer.PlayerASM(this._config,true,true,this.landiag);break;
             case 'dosbox':
-                let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.boxrunbat()
+                let text='c:\\dosbox\\boxasm.bat '+this._config.MASMorTASM+' run '+this._config.boxrunbat
                 this.dosbox.openDOSBox(this._config,text,true,this.landiag)
                 break;
             case 'auto': this.msdosplayer.PlayerASM(this._config,true,false,this.landiag);break;
@@ -43,7 +47,7 @@ export class runcode{
      */
     Debug(){
         this._config=this.update()
-        this.extOutChannel.appendLine('(^ v ^)调试程序，使用'+this._config.MASMorTASM+' 在'+this._config.DOSemu+'模式下运行');
+        this.extOutChannel.appendLine(this._config.MASMorTASM+'('+this._config.DOSemu+')>>调试');
         if (this._config.DOSemu=='msdos player' && this._config.MASMorTASM=='MASM'){
             this.msdosplayer.PlayerASM(this._config,false,true,this.landiag)
         }

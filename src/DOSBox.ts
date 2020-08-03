@@ -24,8 +24,7 @@ export class DOSBox{
             else{
                 execSync('dosbox -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path})
             }
-            let info:string=' '
-            if(diag) info=this.BOXdiag(conf,diag)
+            if(diag) this.BOXdiag(conf,diag)
             this._OutChannel.appendLine("已打开DOSBox，并配置汇编环境")
         }   
     }
@@ -64,6 +63,7 @@ export class DOSBox{
     {
         let fs: FileSystem = workspace.fs;
         let configUri:Uri = Uri.file(conf.path + '/dosbox/VSC-ExtUse.conf');
+        if(process.platform=='win32')configUri=Uri.joinPath(conf.toolsUri,'./dosbox/VSC-ExtUse.conf');
         let Pathadd=' '
         if (bothtool) Pathadd='set PATH=c:\\tasm;c:\\masm'
         const configContent = `[sdl]
