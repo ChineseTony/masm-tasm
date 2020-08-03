@@ -84,7 +84,7 @@
 					"description": "选择使用的16位环境模拟器，dosbox位于dosbox文件夹下，msdos player位于work文件夹",
 					"enum":["dosbox","msdos player","auto"],
 					"enumDescriptions":[
-						"全部使用dosbox模拟16位系统环境,不支持问题输出",
+						"全部使用dosbox模拟16位系统环境,不支持问题输出（linux下所有选项都将视为选择了这个选项）",
 						"尽量使用msdos player在终端中模拟，td除外",
 						"自动选择（推荐）：使用msdos-player汇编链接，使用dosbox运行，TD调试时用dosbox，debug时用masm"
 					]

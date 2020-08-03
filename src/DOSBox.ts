@@ -31,11 +31,12 @@ export class DOSBox{
     }
     private BOXdiag(conf:Config,diag:landiagnose):string{
         let info:string=' ',content
-        let infouri=Uri.parse('file:///' + conf.path + '/work/T.txt');
+        let infouri=Uri.file(conf.path + '/work/T.TXT');
         let turi=window.activeTextEditor?.document.uri
         let texturi:Uri
-        if (turi) texturi=turi
-        if(turi){workspace.fs.readFile(infouri).then(
+        if (turi) {
+            texturi=turi
+            workspace.fs.readFile(infouri).then(
             (text)=>{
                 info=text.toString()
                 workspace.fs.readFile(texturi).then(
@@ -45,23 +46,24 @@ export class DOSBox{
                         this._OutChannel.append(info)
                     }
                 )
-            }
+            },
+            ()=>{console.log(infouri,'readfailed')}
         )}
         return info
     }
     private cleanandcopy(cleanpath:string,copyfilename:string){
         if(process.platform=='win32'){
-            execSync('  del work\\T.* && copy "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath,shell:'cmd.exe'});
+            exec('  del work\\T.* && copy "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath,shell:'cmd.exe'});
         }
         else{
-            execSync('  rm work/T.* && cp "'+copyfilename+'" work\\T.ASM',{cwd:cleanpath});
+            exec('  rm work/T.* ; cp "'+copyfilename+'" work/T.ASM',{cwd:cleanpath});
         }
         this._OutChannel.appendLine(copyfilename+'已将该文件复制到'+cleanpath+'work/T.ASM');
      }
     private writeBoxconfig(autoExec: string,conf:Config,bothtool?:boolean)
     {
         let fs: FileSystem = workspace.fs;
-        let configUri:Uri = Uri.parse('file:///' + conf.path + '/dosbox/VSC-ExtUse.conf');
+        let configUri:Uri = Uri.file(conf.path + '/dosbox/VSC-ExtUse.conf');
         let Pathadd=' '
         if (bothtool) Pathadd='set PATH=c:\\tasm;c:\\masm'
         const configContent = `[sdl]
@@ -69,7 +71,7 @@ windowresolution=${conf.resolution}
 output=opengl
 [autoexec]
 mount c "${conf.path}"
-mount d "${conf.path}\\work"
+mount d "${conf.path}/work"
 d:
 ${Pathadd}
 ${autoExec}`;
