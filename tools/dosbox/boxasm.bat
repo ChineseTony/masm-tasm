@@ -17,8 +17,8 @@ goto end
 
 :TASM
 set path=%path%;c:\tasm
-tasm  T.ASM>T.txt
-tlink  T.OBJ>>T.txt
+tasm /zi T.ASM>T.txt
+tlink /v/3 T.OBJ>>T.txt
 if  exist T.exe goto TASMNEXT
 exit
 :TASMNEXT

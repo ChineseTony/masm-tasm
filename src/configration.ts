@@ -41,7 +41,7 @@ export class Config {
         switch(this._BOXrun){
             case "keep":command=' ';break;
             case "exit after run":command='exit';break;
-            case "pause then exit after run":command='pause \r\n exit';break
+            case "pause then exit after run":command='pause \n exit';break
         }
         return command
     }

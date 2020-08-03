@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import {runcode} from './runcode';
-import {Config} from './configration'
 let asm:runcode
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "masm-tasm" is now active!');

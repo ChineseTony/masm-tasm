@@ -82,11 +82,11 @@ export class MSDOSplayer{
             this.outTerminal(runordebug,conf)
         }
         else {
-            let dosbox=new  DOSBox(this.extOutChannel)
+            let dosbox=new  DOSBox(this.extOutChannel,conf)
             if (runordebug){
             dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd,false)}
             else{
-            dosbox.openDOSBox(conf,debug,true)}
+            dosbox.openDOSBox(conf,debug,false)}
         }
     }
 }

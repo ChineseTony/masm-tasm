@@ -14,8 +14,40 @@ export class landiagnose{
         this.tasmCollection=languages.createDiagnosticCollection("TASM")
         this.diagnostics = []
     }
-
     /**
+     * 错误匹配diagnose problemmatch，返回0无错误，返回1有警告信息，返回2有错误
+     * 返回一个数字 0表示有错误，1表示无错误有警告，2表示无错误无警告
+     * @param text 源代码文件的文本内容
+     * @param info 输出的错误信息
+     * @param fileuri 源代码文件的位置uri定位
+     */
+    public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
+        this.channaloutput(info)
+        let flag =2;
+        let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
+        //console.log(text,info)
+        let MASMorTASM:string|undefined
+        if (ASM) MASMorTASM=ASM
+        else{
+            let r=firstreg.exec(info)
+            if (r == null){
+                console.error('输出中无法获得汇编工具信息')}
+            else{
+                MASMorTASM=r.pop()
+            }
+        }
+        if(MASMorTASM=='TASM') flag=this.tasmdiagnose(text,info,fileuri,ASM)
+        else if(MASMorTASM=='MASM') flag=this.masmdiagnose(text,info,fileuri,ASM)
+        return flag
+    }
+    /**
+     * 将输出的错误信息，以一种比较美观的方式打印到输出面板上
+     * @param info 错误信息
+     */
+    private channaloutput(info:string){
+        this._OutChannel.append(info.replace('\r\n\r\n','\r\n'))
+    }
+        /**
      * 根据行数生成range信息，vscode中的位置信息为0base
      * @param str 错误信息所在的文本
      * @param line_get 错误信息所在的行数（1base）
@@ -36,33 +68,6 @@ export class landiagnose{
             ran=new Range(new Position(line-1, startindex),new Position(line-1, endindex))
         }
         return ran
-    }
-//TODO:目前代码比较得简单粗暴
-    /**
-     * 错误匹配diagnose problemmatch，返回0无错误，返回1有警告信息，返回2有错误
-     * 返回一个数字 0表示有错误，1表示无错误有警告，2表示无错误无警告
-     * @param text 源代码文件的文本内容
-     * @param info 输出的错误信息
-     * @param fileuri 源代码文件的位置uri定位
-     */
-    public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
-        //this._OutChannel.append(info.replace('\r\n\r\n','\r\n'))
-        let flag =2;
-        let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
-        console.log(text,info)
-        let MASMorTASM:string|undefined
-        if (ASM) MASMorTASM=ASM
-        else{
-            let r=firstreg.exec(info)
-            if (r == null){
-                console.error('输出中无法获得汇编工具信息')}
-            else{
-                MASMorTASM=r.pop()
-            }
-        }
-        if(MASMorTASM=='TASM') flag=this.tasmdiagnose(text,info,fileuri,ASM)
-        else if(MASMorTASM=='MASM') flag=this.masmdiagnose(text,info,fileuri,ASM)
-        return flag
     }
      /**
      * 

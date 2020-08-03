@@ -15,7 +15,7 @@ export class runcode{
         this.extOutChannel = vscode.window.createOutputChannel('Masm-Tasm');
         this._config=new  Config(this.extpath);
         this.msdosplayer=new MSDOSplayer(this.extOutChannel,this.extpath)
-        this.dosbox=new DOSBox(this.extOutChannel)
+        this.dosbox=new DOSBox(this.extOutChannel,this._config)
         this.landiag=new landiagnose(this.extOutChannel)
     }
     private Openemu(){
