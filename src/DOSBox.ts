@@ -13,11 +13,11 @@ export class DOSBox{
      * @param more 需要执行的额外命令
      * @param bothtools 为true将MASM和TASM都挂载到path中，并删除T.*复制相应文件到此处
      */
-    public openDOSBox(conf:Config,more:string,bothtools?:boolean,diag?:landiagnose) {
+    public async openDOSBox(conf:Config,more:string,bothtools?:boolean,diag?:landiagnose) {
         let filename=window.activeTextEditor?.document.fileName
         if (filename){
-            this.writeBoxconfig(more,conf,bothtools)
-            if(bothtools)this.cleanandcopy(conf.path,filename)
+            await this.writeBoxconfig(more,conf,bothtools)
+            if(bothtools) await this.cleanandcopy(conf.path,filename)
             if(process.platform=='win32'){
                 execSync('start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path,shell:'cmd.exe'})
             }
@@ -50,7 +50,7 @@ export class DOSBox{
         )}
         return info
     }
-    private cleanandcopy(cleanpath:string,copyfilename:string){
+    private async cleanandcopy(cleanpath:string,copyfilename:string){
         if(process.platform=='win32'){
             let command:string='del/Q work\\t*.* && copy "'+copyfilename+'" work\\T.ASM'
             execSync(command,{cwd:cleanpath,shell:'cmd.exe'});
@@ -61,7 +61,7 @@ export class DOSBox{
         }
         this._OutChannel.appendLine(copyfilename+'已将该文件复制到'+cleanpath+'work/T.ASM');
      }
-    private writeBoxconfig(autoExec: string,conf:Config,bothtool?:boolean)
+    private async writeBoxconfig(autoExec: string,conf:Config,bothtool?:boolean)
     {
         let fs: FileSystem = workspace.fs;
         let configUri=Uri.joinPath(conf.toolsUri,'./dosbox/VSC-ExtUse.conf');
