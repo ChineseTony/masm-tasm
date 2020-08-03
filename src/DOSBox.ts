@@ -16,21 +16,27 @@ export class DOSBox{
     public async openDOSBox(conf:Config,more:string,bothtools?:boolean,diag?:landiagnose) {
         let filename=window.activeTextEditor?.document.fileName
         if (filename){
-            await this.writeBoxconfig(more,conf,bothtools)
             if(bothtools) await this.cleanandcopy(conf.path,filename)
-            if(process.platform=='win32'){
-                execSync('start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path,shell:'cmd.exe'})
-            }
-            else{
-                execSync('dosbox -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path})
-            }
-            if(diag) this.BOXdiag(conf,diag)
-            this._OutChannel.appendLine("已打开DOSBox，并配置汇编环境")
+            this.writeBoxconfig(more,conf,bothtools).then(
+                ()=>{
+                    if(process.platform=='win32'){
+                        execSync('start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path,shell:'cmd.exe'})
+                    }
+                    else{
+                        execSync('dosbox -conf "dosbox/VSC-ExtUse.conf" ',{cwd:conf.path})
+                    }
+                    if(diag) this.BOXdiag(conf,diag)
+                    this._OutChannel.appendLine("已打开DOSBox，并配置汇编环境")
+
+                }
+            )
+            
+            
         }   
     }
     private BOXdiag(conf:Config,diag:landiagnose):string{
         let info:string=' ',content
-        let infouri=Uri.joinPath(conf.toolsUri, '.\\work\\T.TXT');
+        let infouri=Uri.joinPath(conf.toolsUri, './work/T.TXT');
         let turi=window.activeTextEditor?.document.uri
         let texturi:Uri
         if (turi) {
@@ -52,7 +58,7 @@ export class DOSBox{
     }
     private async cleanandcopy(cleanpath:string,copyfilename:string){
         if(process.platform=='win32'){
-            let command:string='del/Q work\\t*.* && copy "'+copyfilename+'" work\\T.ASM'
+            let command:string='del/Q work\\t*.* & copy "'+copyfilename+'" work\\T.ASM'
             execSync(command,{cwd:cleanpath,shell:'cmd.exe'});
         }
         else{

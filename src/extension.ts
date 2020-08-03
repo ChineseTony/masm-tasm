@@ -1,17 +1,18 @@
 import * as vscode from 'vscode';
 import {runcode} from './runcode';
+import {Config} from './configration'
 let asm:runcode
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "masm-tasm" is now active!');
 	asm = new runcode(context);
 	let opendosbox = vscode.commands.registerTextEditorCommand('masm-tasm.opendosbox', () => {
-		asm.Openemu();
+		asm.runcode('opendosbox');
 	});
 	let runASM = vscode.commands.registerTextEditorCommand('masm-tasm.runASM', () => {
-		asm.Run();
+		asm.runcode('run');
 	});
 	let debugASM = vscode.commands.registerTextEditorCommand('masm-tasm.debugASM', () => {
-		asm.Debug();
+		asm.runcode('debug');
 	});
 	let cleanalldiagnose=vscode.commands.registerTextEditorCommand('masm-tasm.cleanalldiagnose', () => {
 		asm.cleanalldiagnose();

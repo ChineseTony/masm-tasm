@@ -6,28 +6,26 @@ import { landiagnose } from './diagnose';
 export class runcode{
     private readonly extOutChannel: vscode.OutputChannel;
     private readonly extpath:string
-    private _config:Config|null
+    private _config:Config
     private msdosplayer:MSDOSplayer
     private dosbox: DOSBox
     private landiag:landiagnose
     constructor(content: vscode.ExtensionContext) {
         this.extpath = content.extensionPath
         this.extOutChannel = vscode.window.createOutputChannel('Masm-Tasm');
-        this._config=null;
+        this._config=new  Config(this.extpath);
         this.msdosplayer=new MSDOSplayer(this.extOutChannel,this.extpath)
         this.dosbox=new DOSBox(this.extOutChannel)
         this.landiag=new landiagnose(this.extOutChannel)
     }
-    Openemu(){
-        this._config=this.update()
+    private Openemu(){
         this.extOutChannel.appendLine('MASM/TASM>>打开DOSBox');
         this.dosbox.openDOSBox(this._config,' ',true)
     }
     /**运行汇编代码的入口
      * 获取拓展的设置，并执行相应操作
      */
-    Run(){
-        this._config=this.update()
+    private Run(){
         this.extOutChannel.appendLine(this._config.MASMorTASM+'('+this._config.DOSemu+')>>运行');
         switch(this._config.DOSemu){
             case 'msdos player': this.msdosplayer.PlayerASM(this._config,true,true,this.landiag);break;
@@ -42,8 +40,7 @@ export class runcode{
     /**调试程序
      * 获取拓展的设置并执行相应操作
      */
-    Debug(){
-        this._config=this.update()
+    private Debug(){
         this.extOutChannel.appendLine(this._config.MASMorTASM+'('+this._config.DOSemu+')>>调试');
         if (this._config.DOSemu=='msdos player' && this._config.MASMorTASM=='MASM'){
             this.msdosplayer.PlayerASM(this._config,false,true,this.landiag)
@@ -67,12 +64,18 @@ export class runcode{
     }
     /**更新设置，根据设置保存编辑器文件
      **/
-    private update(){
+    public runcode(command:string){
         this._config=new Config(this.extpath)
-        if (this._config.savefirst) {
-            vscode.workspace.saveAll()
+        if (this._config.savefirst && vscode.window.activeTextEditor?.document.isDirty) {
+            vscode.window.activeTextEditor?.document.save().then(()=>this.asmit(command))  
         }
-        this.extOutChannel.show()
-        return this._config
+        else this.asmit(command)
+    }
+    private asmit(command:string){
+        switch (command){
+            case 'opendosbox':this.Openemu();break
+            case 'run':this.Run();break
+            case 'debug':this.Debug();break
+        }  
     }
 }

@@ -46,7 +46,7 @@ export class landiagnose{
      * @param fileuri 源代码文件的位置uri定位
      */
     public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
-        this._OutChannel.append(info.replace('\r\n\r\n','\r\n'))
+        //this._OutChannel.append(info.replace('\r\n\r\n','\r\n'))
         let flag =2;
         let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
         console.log(text,info)
