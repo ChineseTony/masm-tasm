@@ -17,6 +17,8 @@ All notable changes to the "masm-tasm" extension will be documented in this file
 
 - [x] 简单实现了dosbox下的输出匹配
 
+修改了设置中的选项，增加上了对linux的支持
+
 ## 0.1.0 [2020/7/31]
 
 基本实现了与dos模拟器交互的主要功能了，应该稳定了。渴求反馈哈

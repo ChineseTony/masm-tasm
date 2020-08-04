@@ -6,11 +6,16 @@
 
 1. 同时支持调用**TASM和MASM**: 可以在设置（首选项）中修改使用MASM还是TASM工具集
 2. 提供编辑器**右键菜单**：在汇编语言的编辑器添加了“打开dosbox，运行，调试”的三个选项
-3. **安装即用**：已将相关工具与插件打包在一起，无需配置或安装其他东西，也因此*本插件目前只适用于windows*
+3. **安装即用**：已将相关工具与插件打包在一起，无需配置或安装其他东西
 4. 提供diagnose**问题输出**功能：假如汇编未通过，会标明错误信息与位置
 5. 调用[dosbox](https://www.dosbox.com)和[msdos player](http://takeda-toshiya.my.coocan.jp/msdos)模拟16位系统环境，运行相关组件
 
 十分感谢以上软件！插件难免会有一些bug，欢迎到github发[issue](https://github.com/xsro/masm-tasm/issues)以及PR，大家一起交流和完善。
+
+## 安装要求
+
+- windows 无需其他操作，相关软件已打包在插件之中
+- linux 请先安装dosbox [详情](https://github.com/xsro/masm-tasm/blob/master/doc/非windows下使用.md#linux)
 
 ## Features主要功能
 
