@@ -27,5 +27,6 @@ export function deactivate() {
 	if (asm) {
 		asm.deactivate();
 		asm.cleanalldiagnose();
+		console.log('extendion deactivate')
 	}
 }

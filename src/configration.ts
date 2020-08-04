@@ -3,7 +3,8 @@ import {  workspace, window, Uri} from 'vscode';
  * 获取配置信息
  */
 export class Config {
-    private _path: string|undefined
+    private _path:string|undefined
+    private _toolsuri: Uri|undefined
     private _BOXrun: string|undefined
     private _DOSemu: string|undefined
     private _extpath:string|undefined

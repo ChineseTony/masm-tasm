@@ -3,10 +3,8 @@ export class landiagnose{
     private masmCollection:DiagnosticCollection
     private tasmCollection:DiagnosticCollection
     private diagnostics: Diagnostic[]
-    private masmerror:number=0
-    private tasmerror:number=0
-    private masmwarn:number=0
-    private tasmwarn:number=0
+    private asmerror:number=0
+    private asmwarn:number=0
     private _OutChannel:OutputChannel
     constructor(Channel:OutputChannel){
         this._OutChannel=Channel
@@ -22,9 +20,10 @@ export class landiagnose{
      * @param fileuri 源代码文件的位置uri定位
      */
     public ErrMsgProcess(text:string,info:string,fileuri:Uri,ASM?:string):number{
-        this.channaloutput(info)
-        let flag =2;
         let firstreg:RegExp=/(Fail|Succeed)! ASMfilefrom \s*.*\s* with (TASM|MASM)\r\n/
+        let flag =2
+        this.asmerror=0
+        this.asmwarn=0
         //console.log(text,info)
         let MASMorTASM:string|undefined
         if (ASM) MASMorTASM=ASM
@@ -38,6 +37,9 @@ export class landiagnose{
         }
         if(MASMorTASM=='TASM') flag=this.tasmdiagnose(text,info,fileuri,ASM)
         else if(MASMorTASM=='MASM') flag=this.masmdiagnose(text,info,fileuri,ASM)
+        this._OutChannel.appendLine('收集到'+this.asmerror.toString()+'条错误，'+this.asmwarn+'条警告信息');
+        //this.channaloutput(info)
+        console.log(info)
         return flag
     }
     /**
@@ -132,8 +134,6 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
         let tasm2=/\s*\*+(Error|Warning)\*+\s+(T.ASM)\((\d+)\) (.*)\((\d+)\)\s+(.*)/
         let allmsg=info.split('\n')
         let i=0
-        this.tasmerror=0
-        this.tasmwarn=0
         for (i=1;i<allmsg.length;i++)
         {
             let oneinfo=tasm2.exec(allmsg[i])
@@ -144,11 +144,11 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
                 {
                     case 'Error':
                         severity=0
-                        this.tasmerror++
+                        this.asmerror++
                         break;
                     case 'Warning':
                         severity=1
-                        this.tasmwarn++
+                        this.asmwarn++
                         break;
                 }
                 oneinfo.shift()//弹出文件名
@@ -173,11 +173,11 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
                 {
                     case 'Error':
                         severity=0
-                        this.tasmerror++
+                        this.asmerror++
                         break;
                     case 'Warning':
                         severity=1
-                        this.tasmwarn++
+                        this.asmwarn++
                         break;
                 }
                 oneinfo.shift();//弹出文件内容
@@ -190,16 +190,14 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
             }
         }
             this.tasmCollection.set(fileuri,this.diagnostics)
-            if (this.tasmerror != 0) return 0
-            else if(this.tasmwarn != 0) return 1
+            if (this.asmerror != 0) return 0
+            else if(this.asmwarn != 0) return 1
             else return 2
     }
     
     private masmdiagnose(text:string,info:string,fileuri:Uri,ASM?:string):number
         {
             this.diagnostics = [];
-            this.masmerror=0
-            this.masmwarn=0
             let masm=/\s*T.ASM\((\d+)\): (error|warning)\s+([A-Z]\d+):\s+(.*)/g
             let masml=/\s*T.ASM\((\d+)\): Out of memory/g
             let oneinfo=masml.exec(info)
@@ -212,7 +210,7 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
                     message: "Out of memory",
                     range:this.rangeProvider(text,line)
                 }
-                this.masmerror++
+                this.asmerror++
                 this.diagnostics.push(diagnostic)
                 oneinfo=masml.exec(info)
             }   
@@ -228,10 +226,10 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
                 {
                     case 'error':
                         severity=0
-                        this.masmerror++
+                        this.asmerror++
                         break
                     case 'warning':severity=1
-                        this.masmwarn++
+                        this.asmwarn++
                         break
                 }
                 let msgcode_get=oneinfo.shift()
@@ -250,8 +248,8 @@ private tasmdiagpush(severity:number,line:number,msg:string,text:string,related?
                 oneinfo=masm.exec(info)
             }
             this.masmCollection.set(fileuri,this.diagnostics)         
-            if (this.masmerror != 0) return 0
-                else if(this.masmwarn != 0) return 1
+            if (this.asmerror != 0) return 0
+                else if(this.asmwarn != 0) return 1
                 else return 2
         }
     public cleandiagnose(MASMorTASMorboth:string){

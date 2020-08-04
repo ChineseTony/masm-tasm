@@ -5,6 +5,7 @@ import {exec,execSync} from 'child_process'
 import { landiagnose } from './diagnose'
 export class DOSBox{
     private _OutChannel:OutputChannel
+    static writefile: any
     constructor(Channel:OutputChannel,conf:Config){
         this._OutChannel=Channel
         this.writeBoxconfig(conf,undefined,true)
@@ -55,7 +56,6 @@ export class DOSBox{
     }
     private writeBoxconfig(conf:Config,autoExec?: string,bothtool?:boolean)
     {
-        let fs: FileSystem = workspace.fs;
         let configUri=Uri.joinPath(conf.toolsUri,'./dosbox/VSC-ExtUse.conf');
         let workpath=Uri.joinPath(conf.toolsUri,'./work/');
         let Pathadd=' '
@@ -69,8 +69,13 @@ mount d "${workpath.fsPath}"
 d:
 ${Pathadd}`;
         if (autoExec) configContent=configContent+'\n'+autoExec
-        fs.writeFile(configUri, new TextEncoder().encode(configContent));
+        this.writefile(configUri,configContent)
     }
+    public writefile(Uri:Uri,Content:string){
+        let fs: FileSystem = workspace.fs
+        fs.writeFile(Uri, new TextEncoder().encode(Content))
+    }
+    
 }
 
 

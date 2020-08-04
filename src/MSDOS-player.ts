@@ -1,4 +1,4 @@
-import { OutputChannel,workspace, window, Terminal} from 'vscode'
+import { OutputChannel,workspace, window, Terminal,Uri} from 'vscode'
 import { Config } from './configration';
 import { exec } from 'child_process'
 import { DOSBox } from './DOSBox'
@@ -33,7 +33,7 @@ export class MSDOSplayer{
             exec(command,{cwd:conf.path,shell:'cmd.exe'},(error, stdout, stderr) => 
             {
                 if (error) {console.error(`执行的错误: ${error}`);}
-                let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)
+                let code=diag.ErrMsgProcess(filecontent,stdout,fileuri,conf.MASMorTASM)//处理错误信息
                 switch(code)
                 {
                     case 0:
@@ -52,6 +52,7 @@ export class MSDOSplayer{
                         this.afterlink(conf,viaplayer,isrun)
                         break
                 }
+                DOSBox.writefile(Uri.joinPath(conf.toolsUri,'./work/T.TXT'),stdout)
             })}
     }
     private outTerminal(run:boolean,conf:Config) {
