@@ -41,12 +41,11 @@
 
 ![diagnose](https://github.com/xsro/masm-tasm/raw/master/pics/demo_diagnose_tasm.gif)
 
-## Some Notes 一些相关信息
+## Some Tips 一些相关信息
 
 - 这个插件专注于汇编的编译运行调试环节，推荐结合汇编语法支持（高亮、代码片段等）的插件一起使用，如：[MASM](https://marketplace.visualstudio.com/items?itemName=bltg-team.masm)、[TASM](https://marketplace.visualstudio.com/items?itemName=Roncho.assembly-8086)、[masm-code](https://marketplace.visualstudio.com/items?itemName=kaixa.masm-code)、[x86 and x86_64 Assembly](https://marketplace.visualstudio.com/items?itemName=13xforever.language-x86-64-assembly)等。
-- 如果需要测试代码可以到[VSCtasks wiki](https://github.com/xsro/VSC-ASMtasks/wiki/dosbox)、[cltasm](https://gitee.com/chenliucx/CLTASM/tree/code/)中找到一些有意思的代码。
-- 如果不想用插件可以选择参考[VSC-ASMtasks](https://github.com/xsro/VSC-ASMtasks)通过配置VSCode任务的方式实现部分功能
-- 插件工作时会将VSCode当前编辑器的文件（默认会自动保存当前更改）复制到工作文件夹，启动dosbox 挂载相关目录，添加汇编工具集到path。这样就可以在dosbox窗口运行相关工具。此时dosbox中虚拟的d盘的T.ASM文件即为VSCode编辑器当前文件的副本，可以对他进行汇编、链接、运行、调试等操作。
+- 一些有趣的汇编代码: [dosbox codes]](https://github.com/xsro/masm-tasm/wiki/dosbox)
+- 使用终端任务调用dosbox：[VSC-ASMtasks](https://github.com/xsro/VSC-ASMtasks)
 - 通过msdos或者auto模式运行调试代码的时候，如果出错会在问题面板中显示错误信息，如果想要清除可以在命令面板输入`清除MASM/TASM的所有问题信息`来实现。
 
 ## Extension Settings拓展设置
