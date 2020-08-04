@@ -45,7 +45,10 @@ export class DOSBox{
                 workspace.fs.readFile(texturi).then(
                     (text)=>{
                         content=text.toString()
-                        diag.ErrMsgProcess(content,info,texturi,conf.MASMorTASM)
+                        if(diag.ErrMsgProcess(content,info,texturi,conf.MASMorTASM)==0){
+                            let Errmsgwindow=conf.MASMorTASM+'汇编出错,无法运行/调试'
+                            window.showErrorMessage(Errmsgwindow);
+                        }
                     }
                 )
             },
