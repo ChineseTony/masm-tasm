@@ -18,9 +18,8 @@ export class MSDOSplayer{
      * @param isrun 决定是运行还是调试，true为运行，false为debug 
      * @param viaplayer 决定在什么中运行/调试,true为在msdos-player中运行或调试，fasle为在dosbox中进行
      */
-    public PlayerASM(conf:Config,isrun:boolean,viaplayer:boolean,diag:landiagnose)
+    public PlayerASM(conf:Config,isrun:boolean,viaplayer:boolean,diag:landiagnose,fileuri:Uri)
     {
-        const fileuri=window.activeTextEditor?.document.uri
         let filecontent:string
         if(fileuri){
             workspace.fs.readFile(fileuri).then(
@@ -85,9 +84,9 @@ export class MSDOSplayer{
         else {
             let dosbox=new  DOSBox(this.extOutChannel,conf)
             if (runordebug){
-            dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd,false)}
+            dosbox.openDOSBox(conf,'T.EXE\n'+conf.boxruncmd)}
             else{
-            dosbox.openDOSBox(conf,debug,false)}
+            dosbox.openDOSBox(conf,debug)}
         }
     }
 }

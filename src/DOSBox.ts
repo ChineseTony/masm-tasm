@@ -1,38 +1,37 @@
-import { Uri,FileSystem, OutputChannel,workspace, window, DiagnosticSeverity} from 'vscode'
+import { Uri,FileSystem, OutputChannel,workspace, window} from 'vscode'
 import { TextEncoder } from 'util'
 import { Config } from './configration'
 import {exec,execSync} from 'child_process'
 import { landiagnose } from './diagnose'
 export class DOSBox{
-    private _OutChannel:OutputChannel
     static writefile: any
     constructor(Channel:OutputChannel,conf:Config){
-        this._OutChannel=Channel
         this.writeBoxconfig(conf,undefined,true)
     }
     /**打开dosbox,操作文件
+     * @param fileuri 
      * @param conf 配置文件
      * @param more 需要执行的额外命令
      * @param cleancopy 为true将MASM和TASM都挂载到path中，并删除T.*复制相应文件到此处
      */
-    public openDOSBox(conf:Config,more:string,cleancopy?:boolean,diag?:landiagnose) {
-        let filename=window.activeTextEditor?.document.fileName
-        if (filename){
+    public openDOSBox(conf:Config,more?:string,fileuri?:Uri,diag?:landiagnose) {
+        let boxcommand=' '
+        if(more){
             let boxparam=more.replace(/\n/g,'"-c "')
-            let boxcommand='-c "'+boxparam+'"'
-            if(process.platform=='win32'){
-                let wincommand='start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" '
-                if(cleancopy) wincommand='del/Q work\\t*.* & copy "'+filename+'" work\\T.ASM &'+wincommand
-                execSync(wincommand+boxcommand,{cwd:conf.path,shell:'cmd.exe'})
-            }
-            else{
-                let linuxcommand='dosbox -conf "dosbox/VSC-ExtUse.conf" '
-                if(cleancopy) linuxcommand='if [ -d work ]; then rm work/*; else mkdir work; fi; cp "'+filename+'" work/T.ASM;'+linuxcommand
-                execSync(linuxcommand+boxcommand,{cwd:conf.path})
-            }
-            if(diag) this.BOXdiag(conf,diag)
-            this._OutChannel.appendLine("已打开DOSBox，并配置汇编环境")  
-    }}
+            boxcommand='-c "'+boxparam+'"'
+        }
+        if(process.platform=='win32'){
+            let wincommand='start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" '
+            if(fileuri) wincommand='del/Q work\\t*.* & copy "'+fileuri.fsPath+'" work\\T.ASM &'+wincommand
+            execSync(wincommand+boxcommand,{cwd:conf.path,shell:'cmd.exe'})
+        }
+        else{
+            let linuxcommand='dosbox -conf "dosbox/VSC-ExtUse.conf" '
+            if(fileuri) linuxcommand='if [ -d work ]; then rm work/*; else mkdir work; fi; cp "'+fileuri.fsPath+'" work/T.ASM;'+linuxcommand
+            execSync(linuxcommand+boxcommand,{cwd:conf.path})
+        }
+        if(diag) this.BOXdiag(conf,diag)
+    }
     private BOXdiag(conf:Config,diag:landiagnose):string{
         let info:string=' ',content
         let infouri=Uri.joinPath(conf.toolsUri, './work/T.TXT');
