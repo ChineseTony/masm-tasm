@@ -22,12 +22,12 @@ export class DOSBox{
             if(process.platform=='win32'){
                 let wincommand='start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" '
                 if(cleancopy) wincommand='del/Q work\\t*.* & copy "'+filename+'" work\\T.ASM &'+wincommand
-                exec(wincommand+boxcommand,{cwd:conf.path,shell:'cmd.exe'})
+                execSync(wincommand+boxcommand,{cwd:conf.path,shell:'cmd.exe'})
             }
             else{
                 let linuxcommand='dosbox -conf "dosbox/VSC-ExtUse.conf" '
                 if(cleancopy) linuxcommand='if [ -d work ]; then rm work/*; else mkdir work; fi; cp "'+filename+'" work/T.ASM;'+linuxcommand
-                exec(linuxcommand+boxcommand,{cwd:conf.path})
+                execSync(linuxcommand+boxcommand,{cwd:conf.path})
             }
             if(diag) this.BOXdiag(conf,diag)
             this._OutChannel.appendLine("已打开DOSBox，并配置汇编环境")  
