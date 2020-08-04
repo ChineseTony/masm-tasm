@@ -22,12 +22,13 @@ export class DOSBox{
         }
         if(process.platform=='win32'){
             let wincommand='start/min/wait "" "dosbox/dosbox.exe" -conf "dosbox/VSC-ExtUse.conf" '
-            if(fileuri) wincommand='del/Q work\\t*.* & copy "'+fileuri.fsPath+'" work\\T.ASM &'+wincommand
+            if(fileuri) wincommand='del/Q work\\T*.* & copy "'+fileuri.fsPath+'" work\\T.ASM & '+wincommand
             execSync(wincommand+boxcommand,{cwd:conf.path,shell:'cmd.exe'})
+            console.log(wincommand+boxcommand)
         }
         else{
             let linuxcommand='dosbox -conf "dosbox/VSC-ExtUse.conf" '
-            if(fileuri) linuxcommand='if [ -d work ]; then rm work/*; else mkdir work; fi; cp "'+fileuri.fsPath+'" work/T.ASM;'+linuxcommand
+            if(fileuri) linuxcommand='rm work/t*.* work/T*.* ; cp "'+fileuri.fsPath+'" work/T.ASM;'+linuxcommand
             execSync(linuxcommand+boxcommand,{cwd:conf.path})
         }
         if(diag) this.BOXdiag(conf,diag)

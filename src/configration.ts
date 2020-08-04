@@ -4,7 +4,6 @@ import {  workspace, window, Uri} from 'vscode';
  */
 export class Config {
     private _path:string|undefined
-    private _toolsuri: Uri|undefined
     private _BOXrun: string|undefined
     private _DOSemu: string|undefined
     private _extpath:string|undefined
