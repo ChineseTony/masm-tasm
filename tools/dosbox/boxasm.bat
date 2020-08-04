@@ -34,7 +34,8 @@ TD T.EXE
 exit
 :run
 T.EXE
-echo END OF YOUR PROGRAM
+echo (END)
+echo The symbol "--END--" means there is the END of your  program
 if "%3"=="p" pause
 if "%3"=="k" goto end
 exit
