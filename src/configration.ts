@@ -13,8 +13,8 @@ export class Config {
     constructor(extpath?:string) {
         this.resolution = workspace.getConfiguration('masmtasm.dosbox').get('CustomResolution');
         this.MASMorTASM= workspace.getConfiguration('masmtasm.ASM').get('MASMorTASM');
-        this._DOSemu= workspace.getConfiguration('masmtasm.emu').get('emulator');
-        this.savefirst= workspace.getConfiguration('masmtasm.emu').get('savefirst');
+        this._DOSemu= workspace.getConfiguration('masmtasm.ASM').get('emulator');
+        this.savefirst= workspace.getConfiguration('masmtasm.ASM').get('savefirst');
         this._BOXrun=workspace.getConfiguration('masmtasm.dosbox').get('run');
         this._path=workspace.getConfiguration('masmtasm.ASM').get('toolspath');
         this._extpath=extpath

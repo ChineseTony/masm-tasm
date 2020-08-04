@@ -66,7 +66,7 @@
             "properties": {
                 "masmtasm.ASM.toolspath": {
                     "type": "string",
-					"description": "你使用的汇编工具集地址，不填将使用自带的工具，如E:\\GitRepo\\masm-tasm\\tools"
+					"description": "（不推荐使用）你使用的汇编工具集地址，不填将使用自带的工具，如E:\\GitRepo\\masm-tasm\\tools"
 				},
 				"masmtasm.ASM.MASMorTASM": {
 					"type": "string",
@@ -78,7 +78,7 @@
 					"使用TASM汇编工具集，包括tasm.exe,tlink.exe,td.exe..."
  			   ]
 				},
-				"masmtasm.emu.emulator": {
+				"masmtasm.ASM.emulator": {
                     "type": "string",
                     "default": "auto",
 					"description": "选择使用的16位环境模拟器，dosbox位于dosbox文件夹下，msdos player位于work文件夹",
@@ -89,7 +89,7 @@
 						"自动选择（推荐）：使用msdos-player汇编链接，使用dosbox运行，TD调试时用dosbox，debug时用masm"
 					]
 				},
-				"masmtasm.emu.savefirst": {
+				"masmtasm.ASM.savefirst": {
                     "type": "boolean",
                     "default": true,
                     "description": "在运行之前先保存文件,不保存的话，无法体现当前变更"
