@@ -20,16 +20,16 @@ export function getrefer(word: string, doc: vscode.TextDocument): vscode.Locatio
 					case linetype.endm: skip = false; break
 					case linetype.label:
 						if (skip === false) {
-							//TODO：优化匹配方式，对于变量应该考虑多种复杂的表达式如：查找var不能找到nvar
+							//TODO：优化匹配方式，对于变量应该考虑多种复杂的表达式如：查找var不能找到nvar，对注释信息进行对齐
 							if (def?.type === symboltype.variable && item.operand?.includes(word)) {
 								let start = item.str.indexOf(word)
 								r = new vscode.Range(index, start, index, start + word.length)
 							}
-							if (def?.type === symboltype.macro && item.operator === word) {
+							else if (def?.type === symboltype.macro && item.operator === word) {
 								let start = item.str.indexOf(word)
 								r = new vscode.Range(index, start, index, start + word.length)
 							}
-							if ((def?.type === symboltype.procedure || def?.type === symboltype.label) && item.operand === word) {
+							else if ((def?.type === symboltype.procedure || def?.type === symboltype.label) && item.operand === word) {
 								let start = item.str.indexOf(word)
 								r = new vscode.Range(index, start, index, start + word.length)
 							}
@@ -48,8 +48,7 @@ export function getrefer(word: string, doc: vscode.TextDocument): vscode.Locatio
 export function codeformatting(document: vscode.TextDocument, options: vscode.FormattingOptions): vscode.TextEdit[] {
 	let formator: vscode.TextEdit[] = [],
 		namesize: number = 0, optsize: number = 0, oprsize: number = 0, str: string | undefined = undefined,
-		r: vscode.Range, Endline: string = '\r\n'
-	if (document.eol === vscode.EndOfLine.LF) Endline = '\n'
+		r: vscode.Range
 	//scan the asmlines for information
 	asmline.forEach(
 		(item) => {
@@ -231,21 +230,8 @@ class Asmline {
 		return flag
 	}
 	private getvarlabel(item: string) {
-		let r = item.match(/^\s*(\w+\s*:|)\s*(\w+|)(\s+.*|)$/)
+		let r = item.match(/^\s*(\w+\s+|)([dD][bBwWdDfFqQtT]|=|EQU|equ)(\s+.*)$/)
 		let name: string | undefined
-		if (r) {
-			name = r[1]
-			this.type = linetype.label
-			if (name.length !== 0) {
-				this.name = name.slice(0, name.length - 1).trim()
-				let start = item.indexOf(r[1])
-				let one: TasmSymbol = new TasmSymbol(symboltype.label, this.name, new vscode.Position(this.line, start))
-				symbols.push(one)
-			}
-			this.operator = r[2]
-			this.operand = r[3].trim()
-		}
-		r = item.match(/^\s*(\w+\s+|)([dD][bBwWdDfFqQtT]|=|EQU|equ)(\s+.*)$/)
 		if (r) {
 			name = r[1].trim()
 			this.type = linetype.variable
@@ -258,6 +244,20 @@ class Asmline {
 			this.operator = r[2]
 			this.operand = r[3].trim()
 		}
+		else if (r= item.match(/^\s*(\w+\s*:|)\s*(\w+|)(\s+.*|)$/)) {
+			name = r[1]
+			this.type = linetype.label
+			if (name.length !== 0) {
+				this.name = name.slice(0, name.length - 1).trim()
+				let start = item.indexOf(r[1])
+				let one: TasmSymbol = new TasmSymbol(symboltype.label, this.name, new vscode.Position(this.line, start))
+				symbols.push(one)
+			}
+			this.operator = r[2]
+			this.operand = r[3].trim()
+		}
+
+		
 	}
 	public varlabelsymbol(): vscode.DocumentSymbol | undefined {
 		let vscsymbol: vscode.DocumentSymbol | undefined
